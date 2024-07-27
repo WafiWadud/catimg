@@ -1,0 +1,17 @@
+#!/bin/bash
+
+export url
+export filename
+url="$(curl -s https://api.thecatapi.com/v1/images/search | jq '.[].url' --raw-output)"
+filename="$(basename "$url")"
+
+curl "$url" --output "$filename"
+wezterm imgcat "$filename"
+
+read -r -p "Save File? [y/N] "
+
+if [[ $REPLY =~ ^[Nn]$ ]]; then
+	rm "$filename"
+else
+	printf "File saved as %s\n" "$filename"
+fi

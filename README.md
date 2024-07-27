@@ -1,7 +1,7 @@
 # Catimg
 
 > [!IMPORTANT]
-> This bash script needs to have wezterm installed.
+> This bash script needs to have wezterm & jq installed.
 
 ---
 

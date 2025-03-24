@@ -1,16 +1,35 @@
 #!/bin/bash
 
+# Function to detect terminal and display image
+display_image() {
+	local image_file="$1"
+
+	if [ -n "$WEZTERM_PANE" ]; then
+		# WezTerm detected
+		wezterm imgcat "$image_file"
+	elif [ -n "$KITTY_WINDOW_ID" ]; then
+		# Kitty terminal detected
+		kitty +kitten icat "$image_file"
+	else
+		# Unsupported terminal
+		echo "Error: Unsupported terminal. Please use WezTerm or Kitty terminal."
+		exit 1
+	fi
+}
+
+# Get a random cat image
 export url
 export filename
 url="$(curl -s https://api.thecatapi.com/v1/images/search | jq '.[].url' --raw-output)"
 filename="$(basename "$url")"
 
 curl "$url" --output "$filename"
-wezterm imgcat "$filename"
+display_image "$filename"
 
+# Ask to save the file
 read -r -p "Save File? [y/N] "
 
-if [[ $REPLY =~ ^[Nn]$ ]]; then
+if [[ $REPLY =~ ^[Nn]$ ]] || [[ -z "$REPLY" ]]; then
 	rm "$filename"
 else
 	printf "File saved as %s\n" "$filename"
